@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KorryKatti's Experimental Realm</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #000;
+            --glitch-color-1: #ff00ff;
+            --glitch-color-2: #00ffff;
+            --text-primary: #0f0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            cursor: none;
+        }
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--glitch-color-1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: difference;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+        }
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--glitch-color-2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            z-index: 9999;
+            transition: transform 0.3s ease;
+        }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .glitch-container {
+            text-align: center;
+            position: relative;
+        }
+        .glitch-text {
+            font-size: 4rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 
+                0.05em 0 var(--glitch-color-1),
+                -0.03em -0.02em var(--glitch-color-2);
+            animation: glitch-animation 2s infinite;
+        }
+        @keyframes glitch-animation {
+            0% {
+                text-shadow: 
+                    0.05em 0 var(--glitch-color-1),
+                    -0.03em -0.02em var(--glitch-color-2);
+            }
+            15% {
+                text-shadow: 
+                    0.05em 0 var(--glitch-color-1),
+                    -0.03em -0.02em var(--glitch-color-2);
+            }
+            16% {
+                text-shadow: 
+                    -0.05em -0.02em var(--glitch-color-1),
+                    0.03em 0.02em var(--glitch-color-2);
+            }
+            49% {
+                text-shadow: 
+                    -0.05em -0.02em var(--glitch-color-1),
+                    0.03em 0.02em var(--glitch-color-2);
+            }
+            50% {
+                text-shadow: 
+                    0.05em 0.02em var(--glitch-color-1),
+                    0.03em 0 var(--glitch-color-2);
+            }
+            99% {
+                text-shadow: 
+                    0.05em 0.02em var(--glitch-color-1),
+                    0.03em 0 var(--glitch-color-2);
+            }
+            100% {
+                text-shadow: 
+                    -0.05em 0 var(--glitch-color-1),
+                    -0.03em -0.02em var(--glitch-color-2);
+            }
+        }
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+            perspective: 1000px;
+        }
+        .project-card {
+            background-color: rgba(0,255,0,0.1);
+            border: 2px dashed var(--text-primary);
+            padding: 1.5rem;
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,255,0,0.05) 0px,
+                rgba(0,255,0,0.05) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            transform: rotate(-45deg);
+            opacity: 0.3;
+        }
+        .project-card:hover {
+            transform: rotateX(10deg) rotateY(10deg) scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,0,0.5);
+        }
+        .project-card h2 {
+            color: var(--glitch-color-1);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .project-card a {
+            display: block;
+            color: var(--text-primary);
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: color 0.3s ease;
+        }
+        .project-card a:hover {
+            color: var(--glitch-color-2);
+        }
+        .background-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            opacity: 0.05;
+            background-image: 
+                repeating-radial-gradient(
+                    #0f0 0%, 
+                    #0f0 1px, 
+                    transparent 1px, 
+                    transparent 2px
+                );
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+    <div class="background-noise"></div>
+    <div class="container">
+        <div class="glitch-container">
+            <h1 class="glitch-text">Experimental Realm</h1>
+        </div>
+        <div class="project-grid">
+            <div class="project-card">
+                <h2>Mirage</h2>
+                <p>Secure Messaging Playground</p>
+                <a href="/mirage">Dive In</a>
+            </div>
+            <div class="project-card">
+                <h2>Thunder</h2>
+                <p>Software Distribution Revolution</p>
+                <a href="/thunder">Explore</a>
+            </div>
+            <div class="project-card">
+                <h2>Ziggle</h2>
+                <p>Experimental Drawing Tool</p>
+                <a href="/ziggle">Create</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            cursorFollower.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        });
+
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+                cursorFollower.style.transform = 'translate(-50%, -50%) scale(3)';
+            });
+            card.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%)';
+                cursorFollower.style.transform = 'translate(-50%, -50%)';
+            });
+        });
+    </script>
+</body>
+</html>

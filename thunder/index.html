@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thunder - Effortless Software Installation</title>
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --text-primary: #e0e0e0;
+            --accent-color: #4db8ff;
+            --accent-hover: #1e90ff;
+            --shadow-color: rgba(77, 184, 255, 0.3);
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(77, 184, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 10s infinite alternate;
+            z-index: 1;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating-icon {
+            animation: float 4s ease-in-out infinite;
+            display: inline-block;
+        }
+        h1 {
+            color: var(--accent-color);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .tagline {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+        .feature {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+        .feature h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        .cta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 3rem 0;
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .download-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-os {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--accent-color);
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(77, 184, 255, 0.3);
+        }
+        .btn-os:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        .btn-os i {
+            font-size: 1.2rem;
+        }
+        .btn {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--accent-color);
+            color: var(--bg-dark);
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(77, 184, 255, 0.2);
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(77, 184, 255, 0.3);
+        }
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(77, 184, 255, 0.3);
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(30, 30, 30, 0.9);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            top: 100%;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-content a {
+            color: var(--text-primary);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .dropdown .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dropdown .btn::after {
+            content: '▼';
+            font-size: 0.7em;
+            margin-left: 0.5rem;
+        }
+        .feature-list {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .feature-list h2 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+        }
+        .feature-detailed-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-detailed-list li {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+        .feature-detailed-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+        .feature-detailed-list li i {
+            color: var(--accent-color);
+            font-size: 2rem;
+            min-width: 50px;
+            text-align: center;
+        }
+        .feature-detailed-list li .feature-content h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+        .feature-detailed-list li .feature-content p {
+            margin: 0;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .open-source {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .open-source a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .open-source a:hover {
+            text-decoration: underline;
+        }
+        .thunder-store {
+            padding: 3rem 0;
+        }
+        .thunder-store > p {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: var(--text-primary);
+            opacity: 0.8;
+        }
+        .thunder-store h2 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        .store-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .store-feature {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .store-feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+        .store-feature h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        .coming-soon {
+            padding: 3rem 0;
+            text-align: center;
+        }
+        .coming-soon-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .progress-indicator {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 50%;
+            height: 100%;
+            background-color: var(--accent-color);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Thunder</h1>
+            <p class="tagline">One-Click Software Installation for Everyone</p>
+        </header>
+
+        <section class="cta">
+            <div class="download-group">
+                <a href="#" class="btn-os"><i>🖥️</i> Windows</a>
+                <a href="#" class="btn-os"><i>🍎</i> MacOS</a>
+                <a href="#" class="btn-os"><i>🐧</i> Linux</a>
+                <a href="#" class="btn-os"><i>🛠️</i> Build from Source</a>
+            </div>
+            <div class="btn-group">
+                <a href="#" class="btn btn-secondary">Documentation</a>
+            </div>
+        </section>
+
+        <section class="thunder-store">
+            <h2>Thunder Store</h2>
+            <p>A curated marketplace for developers to publish and users to discover ready-to-run applications</p>
+            <div class="store-features">
+                <div class="store-feature">
+                    <i>🚀</i>
+                    <h3>Developer Publishing</h3>
+                    <p>Easily publish your applications for instant user access</p>
+                </div>
+                <div class="store-feature">
+                    <i>🔍</i>
+                    <h3>Easy Discovery</h3>
+                    <p>Browse and download apps with a single click, just like a game store</p>
+                </div>
+                <div class="store-feature">
+                    <i>🛡️</i>
+                    <h3>Community-Checked Apps</h3>
+                    <p>Users can downvote and flag problematic apps, creating a self-moderated ecosystem</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-list">
+            <h2>How Thunder Works</h2>
+            <ul class="feature-detailed-list">
+                <li>
+                    <i>🔗</i>
+                    <div class="feature-content">
+                        <h3>GitHub Repository Input</h3>
+                        <p>Simply paste a GitHub repository URL into Thunder</p>
+                    </div>
+                </li>
+                <li>
+                    <i>⚙️</i>
+                    <div class="feature-content">
+                        <h3>Automatic Compilation</h3>
+                        <p>Thunder handles all compilation and dependency management</p>
+                    </div>
+                </li>
+                <li>
+                    <i>📦</i>
+                    <div class="feature-content">
+                        <h3>Packaged Executable</h3>
+                        <p>Generate a single-click executable for Windows, Linux, and Mac</p>
+                    </div>
+                </li>
+                <li>
+                    <i>🚀</i>
+                    <div class="feature-content">
+                        <h3>One-Click Launch</h3>
+                        <p>Users can start the application instantly without any technical setup</p>
+                    </div>
+                </li>
+                <li>
+                    <i>🌐</i>
+                    <div class="feature-content">
+                        <h3>Cross-Language Support</h3>
+                        <p>Works with projects written in Python, JavaScript, Go, Rust, and more</p>
+                    </div>
+                </li>
+                <li>
+                    <i>🔒</i>
+                    <div class="feature-content">
+                        <h3>Secure Packaging</h3>
+                        <p>Safely bundle applications with all necessary dependencies</p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <h3>GitHub Simplification</h3>
+                <p>Transform complex GitHub repositories into simple, executable applications</p>
+            </div>
+            <div class="feature">
+                <h3>No Technical Knowledge</h3>
+                <p>Users don't need to understand compilation or setup processes</p>
+            </div>
+            <div class="feature">
+                <h3>Universal Compatibility</h3>
+                <p>Works across different platforms and programming languages</p>
+            </div>
+        </section>
+
+        <section class="coming-soon">
+            <div class="coming-soon-content">
+                <h2>🚧 Coming Soon</h2>
+                <p>Thunder is currently in active development. Stay tuned for groundbreaking features that will revolutionize software distribution!</p>
+                <div class="progress-indicator">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="open-source">
+            Open Source Project: 
+            <a href="https://github.com/korrykatti/thunder" target="_blank">github.com/korrykatti/thunder</a>
+        </section>
+    </div>
+</body>
+</html>

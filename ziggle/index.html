@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ziggle - Experimental 2D Drawing Tool</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        :root {
+            --bg-dark: #1a1a2e;
+            --text-primary: #e0e0e0;
+            --accent-color: #ff6b6b;
+            --accent-secondary: #4ecdc4;
+            --accent-highlight: #f368e0;
+            --pixel-border: #16213e;
+        }
+        * {
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Press Start 2P', cursive;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(78, 205, 196, 0.02) 0px,
+                    rgba(78, 205, 196, 0.02) 1px,
+                    transparent 1px,
+                    transparent 2px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(243, 104, 224, 0.02) 0px,
+                    rgba(243, 104, 224, 0.02) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            opacity: 0.5;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                linear-gradient(
+                    45deg,
+                    rgba(72, 219, 251, 0.1) 0%,
+                    rgba(243, 104, 224, 0.1) 100%
+                );
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: -1;
+            animation: cyber-pulse 10s ease-in-out infinite alternate;
+        }
+        @keyframes cyber-pulse {
+            0% { 
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            100% { 
+                opacity: 0.5;
+                transform: scale(1.02);
+            }
+        }
+        .neon-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(78, 205, 196, 0.05) 0px,
+                    rgba(78, 205, 196, 0.05) 1px,
+                    transparent 1px,
+                    transparent 3px
+                );
+            mix-blend-mode: color-dodge;
+            animation: neon-flicker 5s infinite alternate;
+        }
+        @keyframes neon-flicker {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.4; }
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: linear-gradient(
+                135deg, 
+                rgba(78, 205, 196, 0.1), 
+                rgba(243, 104, 224, 0.1)
+            );
+            border: 4px solid var(--pixel-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(
+                    0deg, 
+                    rgba(0,0,0,0.2) 50%, 
+                    transparent 50%
+                );
+            background-size: 4px 4px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-highlight);
+            text-shadow: 3px 3px 0 var(--accent-color);
+            letter-spacing: -3px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        .tagline {
+            color: var(--accent-secondary);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .warning-banner {
+            background-color: var(--accent-color);
+            color: var(--bg-dark);
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--pixel-border);
+            position: relative;
+            animation: glitch 0.3s infinite alternate;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .feature {
+            background-color: rgba(255,255,255,0.05);
+            border: 2px solid var(--pixel-border);
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 2px solid var(--accent-secondary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .feature:hover::before {
+            opacity: 1;
+        }
+        .feature h3 {
+            color: var(--accent-highlight);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .cta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            background-color: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg, 
+                transparent, 
+                rgba(255,255,255,0.3), 
+                transparent
+            );
+            transition: all 0.6s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-dark);
+        }
+        .upcoming-features {
+            border: 2px dashed var(--accent-secondary);
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .feature-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--accent-highlight);
+        }
+        .feature-list li strong {
+            color: var(--accent-highlight);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .feature-list li p {
+            font-size: 0.7rem;
+            color: var(--text-primary);
+            opacity: 0.8;
+        }
+        .open-source {
+            text-align: center;
+            padding: 1rem;
+            border-top: 2px dashed var(--accent-secondary);
+            font-size: 0.7rem;
+        }
+        .open-source a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+            position: relative;
+        }
+        .open-source a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--accent-secondary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .open-source a:hover::after {
+            transform: scaleX(1);
+        }
+        .coming-soon {
+            margin-bottom: 2rem;
+        }
+        .coming-soon-content {
+            background-color: rgba(255,255,255,0.05);
+            border: 2px solid var(--pixel-border);
+            padding: 1rem;
+            text-align: center;
+        }
+        .coming-soon-content h2 {
+            color: var(--accent-highlight);
+            margin-bottom: 0.5rem;
+        }
+        .progress-indicator {
+            width: 100%;
+            height: 10px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--pixel-border);
+            position: relative;
+        }
+        .progress-bar {
+            width: 50%;
+            height: 100%;
+            background-color: var(--accent-secondary);
+            animation: progress 2s infinite;
+        }
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="neon-overlay"></div>
+    <div class="container">
+        <div class="warning-banner">
+            EARLY DEVELOPMENT: Unstable Release - Not Recommended for Critical Work
+        </div>
+
+        <header>
+            <h1>Ziggle</h1>
+            <p class="tagline">Experimental 2D Drawing Tool for Creative Exploration</p>
+        </header>
+
+        <section class="features">
+            <div class="feature">
+                <h3>Drawing Tools</h3>
+                <p>Create precise 2D shapes: Rectangles, Lines, Circles, and Text</p>
+            </div>
+            <div class="feature">
+                <h3>Project Management</h3>
+                <p>Custom canvas dimensions, saving, loading, and PNG export</p>
+            </div>
+            <div class="feature">
+                <h3>Intuitive Interface</h3>
+                <p>Modern design with sidebar, color palette, and zoom functionality</p>
+            </div>
+        </section>
+
+        <section class="cta">
+            <a href="https://github.com/korrykatti/ziggle" class="btn">Get Started</a>
+            <a href="https://github.com/korrykatti/ziggle" class="btn">GitHub Repository</a>
+        </section>
+
+        <section class="upcoming-features">
+            <h2>Upcoming Features</h2>
+            <ul class="feature-list">
+                <li>
+                    <strong>ZiggleScript</strong>
+                    <p>A custom scripting language that allows programmatic drawing and shape creation, enabling advanced users to generate complex designs through code-based commands.</p>
+                </li>
+                <li>
+                    <strong>Layer Management</strong>
+                    <p>Introduce a comprehensive layer system to organize and manipulate drawing elements, allowing users to stack, reorder, and adjust transparency of different drawing components.</p>
+                </li>
+                <li>
+                    <strong>Advanced Shape Manipulation</strong>
+                    <p>Extend shape editing capabilities with precise transformation tools, including rotation, skewing, scaling, and boolean operations between shapes.</p>
+                </li>
+                <li>
+                    <strong>Expanded Drawing Toolkit</strong>
+                    <p>Introduce additional drawing tools such as bezier curves, freehand drawing, polygon creation, and advanced brush styles to enhance creative possibilities.</p>
+                </li>
+                <li>
+                    <strong>Collaborative Editing</strong>
+                    <p>Develop real-time collaborative drawing capabilities, allowing multiple users to work on the same canvas simultaneously with version tracking and user presence indicators.</p>
+                </li>
+                <li>
+                    <strong>Thunder App Store Integration</strong>
+                    <p>Seamless integration with Thunder's app distribution platform, enabling easy sharing, discovery, and one-click installation of Ziggle and Ziggle-created projects.</p>
+                </li>
+            </ul>
+        </section>
+
+        <section class="coming-soon">
+            <div class="coming-soon-content">
+                <h2>🚧 Coming Soon</h2>
+                <p>Ziggle is an experimental drawing tool currently in active development. Exciting features and improvements are on the horizon!</p>
+                <div class="progress-indicator">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="open-source">
+            Open Source Project: 
+            <a href="https://github.com/KorryKatti/Ziggle" target="_blank">github.com/KorryKatti/Ziggle</a>
+            <br>
+            MIT License | Maintained by KorryKatti
+        </section>
+    </div>
+</body>
+</html>
