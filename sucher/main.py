@@ -8,6 +8,17 @@ load_dotenv()
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # change this to ["http://127.0.0.1:5500"] for stricter control
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 query_counter = {}  # stores {user_ip: (count, reset_time)}
