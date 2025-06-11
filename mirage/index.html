@@ -1,503 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mirage - Privacy-First Messaging</title>
-    <style>
-        :root {
-            --bg-dark: #121212;
-            --text-primary: #e0e0e0;
-            --accent-color: #bb86fc;
-            --shadow-color: rgba(187, 134, 252, 0.3);
-        }
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            position: relative;
-        }
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-        .bg-bubble {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(187, 134, 252, 0.05);
-            animation: float-bubble linear infinite;
-            opacity: 0.3;
-        }
-        @keyframes float-bubble {
-            0% { 
-                transform: translateY(0) scale(0.5);
-                opacity: 0.1;
-            }
-            50% { 
-                transform: translateY(-100%) scale(1);
-                opacity: 0.3;
-            }
-            100% { 
-                transform: translateY(-200%) scale(1.5);
-                opacity: 0;
-            }
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-        }
-        header {
-            text-align: center;
-            padding: 3rem 0;
-            background: linear-gradient(135deg, rgba(187, 134, 252, 0.1) 0%, transparent 70%);
-            position: relative;
-            overflow: hidden;
-        }
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, rgba(187, 134, 252, 0.05) 0%, transparent 70%);
-            animation: pulse 10s infinite alternate;
-            z-index: 1;
-        }
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.7; }
-            100% { transform: scale(1.1); opacity: 1; }
-        }
-        .tagline {
-            position: relative;
-            z-index: 2;
-            max-width: 800px;
-            margin: 0 auto;
-            font-weight: 300;
-        }
-        h1 {
-            color: var(--accent-color);
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            padding: 3rem 0;
-        }
-        .feature {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .feature:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px var(--shadow-color);
-        }
-        .feature h3 {
-            color: var(--accent-color);
-            margin-bottom: 1rem;
-        }
-        .cta {
-            text-align: center;
-            padding: 3rem 0;
-        }
-        .btn {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: var(--bg-dark);
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin: 0 0.5rem;
-        }
-        .btn:hover {
-            background-color: #9662fc;
-            transform: scale(1.05);
-        }
-        .download-options {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .download-btn {
-            display: flex;
-            align-items: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        .download-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-        .download-btn img {
-            width: 24px;
-            height: 24px;
-            margin-right: 0.5rem;
-        }
-        .open-source {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        .open-source a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        .open-source a:hover {
-            text-decoration: underline;
-        }
-        .feature-list {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-        .feature-list h2 {
-            text-align: center;
-            color: var(--accent-color);
-            margin-bottom: 2rem;
-        }
-        .feature-detailed-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .feature-detailed-list li {
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: start;
-            gap: 1rem;
-            transition: all 0.3s ease;
-            transform: translateY(0);
-        }
-        .feature-detailed-list li:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(187, 134, 252, 0.1);
-        }
-        .feature-detailed-list li i {
-            color: var(--accent-color);
-            font-size: 2rem;
-            min-width: 50px;
-            text-align: center;
-        }
-        .feature-detailed-list li .feature-content h3 {
-            margin: 0 0 0.5rem 0;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-        }
-        .feature-detailed-list li .feature-content p {
-            margin: 0;
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-        .cta .btn {
-            position: relative;
-            overflow: hidden;
-        }
-        .cta .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: all 0.6s;
-        }
-        .cta .btn:hover::before {
-            left: 100%;
-        }
-        .download-options .download-btn {
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .download-options .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .version-announcement {
-            padding: 3rem 0;
-            text-align: center;
-        }
-        .version-announcement .version-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .version-announcement h2 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .version-announcement p {
-            margin-bottom: 2rem;
-        }
-        .coming-soon {
-            padding: 3rem 0;
-            text-align: center;
-        }
-        .coming-soon .coming-soon-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .coming-soon h2 {
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .coming-soon p {
-            margin-bottom: 2rem;
-        }
-        .progress-indicator {
-            width: 100%;
-            height: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            width: 50%;
-            height: 100%;
-            background-color: var(--accent-color);
-            animation: progress 2s infinite;
-        }
-        @keyframes progress {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(100%); }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mirage — vanish on entry</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: monospace;
+      background: #0e0e0e url('bg.png') center/cover no-repeat fixed;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header, main, footer {
+      padding: 2rem;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+    }
+
+    h1 { font-size: 2rem; color: #ff2d75; text-transform: lowercase; }
+    .version { font-size: 0.8rem; color: #777; }
+
+    .hero h2 { margin: 1rem 0 0.5rem; font-size: 1.4rem; }
+    .hero p { margin-bottom: 1.5rem; color: #aaa; }
+
+    .cta {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border: 1px solid #ff2d75;
+      color: #ff2d75;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .cta:hover {
+      background: #ff2d75;
+      color: #000;
+    }
+
+    h3 { margin: 2rem 0 1rem; font-size: 1rem; text-transform: uppercase; }
+
+    ul { list-style: none; font-size: 0.9rem; color: #ccc; }
+    li { margin-bottom: 0.5rem; }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #555;
+      border-top: 1px dashed #333;
+      padding-top: 1rem;
+    }
+    .full-features h3 {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+
+.full-features ul {
+  list-style: none;
+  font-size: 0.9rem;
+  color: #ccc;
+  padding-left: 1rem;
+}
+
+.full-features li {
+  margin-bottom: 1.2rem;
+  line-height: 1.4;
+}
+
+  </style>
 </head>
 <body>
-    <div class="bg-animation" aria-hidden="true">
-        <!-- Bubbles will be dynamically generated by JavaScript -->
-    </div>
-    <div class="container">
-        <header>
-            <h1>Mirage</h1>
-            <p class="tagline">Secure, private messaging that vanishes like a mirage</p>
-        </header>
+  <header>
+    <h1>mirage</h1>
+    <p class="version">v0.0.3-beta — no logs, no traces</p>
+  </header>
 
-        <section class="version-announcement">
-            <div class="version-content">
-                <h2>🎉 Mirage v0.0.2 Released!</h2>
-                <p>Second official pre-release is now available. Expect significant updates and improvements in upcoming versions.</p>
-                <a href="https://github.com/KorryKatti/Mirage/releases/tag/pre-2" class="btn">Download v0.0.2</a>
-            </div>
-        </section>
+  <main>
+    <section class="hero">
+      <h2>chat like it never existed</h2>
+      <p>no servers. no footprints. ghost mode always on.</p>
+      <a href="https://mirage-.glitch.me/" class="cta">enter void</a>
+    </section>
 
-        <section class="features">
-            <div class="feature">
-                <h3>End-to-End Encryption</h3>
-                <p>Your chats are fully encrypted, ensuring only you and your recipient can read them</p>
-            </div>
-            <div class="feature">
-                <h3>No Message Storage</h3>
-                <p>We simply route your messages directly to the recipient, never storing them on our servers</p>
-            </div>
-            <div class="feature">
-                <h3>Anonymous File Sharing</h3>
-                <p>Upload and share files completely anonymously, with no tracking or logs</p>
-            </div>
-            <div class="feature">
-                <h3>Frictionless Signup</h3>
-                <p>Create an account instantly with minimal information - no long forms required</p>
-            </div>
-        </section>
+    <section class="full-features">
+<h3>
+    complete feature list
+    <span title="some of these features are still in progress, visit the website to know more" style="cursor: help; color: #ff2d75; margin-left: 0.5em;">&#33;</span>
+</h3>
 
-        <section class="coming-soon">
-            <div class="coming-soon-content">
-                <h2>🚧 More Features Coming Soon</h2>
-                <p>Mirage is continuously evolving. We're working on exciting new features to enhance your communication experience.</p>
-                <div class="progress-indicator">
-                    <div class="progress-bar"></div>
-                </div>
-            </div>
-        </section>
+  <ul>
+    <li>🔒 <strong>End-to-End Encryption</strong><br>
+      robust protection — not military-grade, but close enough.
+    </li>
+    <li>👥 <strong>Anonymous Accounts</strong><br>
+      no emails, no names, no surveillance.
+    </li>
+    <li>📁 <strong>Anonymous File Sharing</strong><br>
+      share files, vanish — no trail left behind.
+    </li>
+    <li>🌐 <strong>No Metadata Tracking</strong><br>
+      we don't log when, who, or how long. ever.
+    </li>
+    <li>💬 <strong>Multi-Platform Support</strong><br>
+      linux, windows, web — no install, just go.
+    </li>
+    <li>🌈 <strong>Open Source</strong><br>
+      on github. inspect it. fork it. improve it.
+    </li>
+    <li>🌐 <strong>Personal Webpage</strong><br>
+      flex your online self with your own page.
+    </li>
+    <li>🎭 <strong>Animated Avatars</strong><br>
+      expressive pfps that actually move with you.
+    </li>
+    <li>📝 <strong>Personal Blog</strong><br>
+      publish rants, theories, or your manifesto.
+    </li>
+    <li>🔐 <strong>Private + Public Rooms</strong><br>
+      vanish in private, lurk in public — your call.
+    </li>
+    <li>💾 <strong>Message Preservation</strong><br>
+      wanna save stuff? you decide, not us.
+    </li>
+    <li>🤝 <strong>Decentralized Identity</strong><br>
+      own your ID — no god-tier admin watching.
+    </li>
+    <li>🎨 <strong>Rich Media Sharing</strong><br>
+      send images, vids, audio — encrypted, no bs.
+    </li>
+    <li>🌐 <strong>Self-Hostable</strong><br>
+      run your own mirage node — no python needed.
+    </li>
+  </ul>
+</section>
 
-        <section class="cta">
-            <a href="#" class="btn">Open in Web</a>
-        </section>
+  </main>
 
-        <section class="download-options">
-            <a href="#" class="download-btn">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj48cGF0aCBkPSJNMjMuNTUgMTEuMDc2Yy0uMzg0LTUuNTM5LTUuMDY2LTkuODc2LTEwLjc1NS05Ljg3Ni02LjA3IDAtMTEgNC45My0xMSAxMXM0LjkzIDExIDExIDExaDguOTk1YTExLjExMiAxMS4xMTIgMCAwIDAgMTEtMTEuMDU2di0uMDY4YTEwLjg1IDEwLjg1IDAgMCAwLS4yNC0yem0tNy41NTYgNS45MjRoLTMuOTg4di0zLjk4OGgzLjk4OHYzLjk4OHptMC01Ljk3NmgtMy45ODh2LTMuOTg4aDMuOTg4djMuOTg4eiIvPjwvc3ZnPg==" alt="Windows">
-                Windows
-            </a>
-            <a href="#" class="download-btn">
-                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZmZmZmIj48cGF0aCBkPSJNMTEuOTk1IDJjLTUuNTI3IDAtMTAgNC40NzMtMTAgMTBzNC40NzMgMTAgMTAgMTAgMTAtNC40NzMgMTAtMTAtNC40NzMtMTAtMTAtMTB6bS0xLjk5NCAzLjU1NmMtLjM4NC0uMDI0LS43NjguMDU4LTEuMTM2LjI1Mi0uNzM2LjM4LTEuMjM2IDEuMTI0LTEuMzg4IDEuOTQ0LS4xNS44Mi4wOTQgMS42NzYuNjA2IDIuMzEyLjUxMi42MzYgMS4yODguOTg4IDIuMTA4Ljk4OGguMDAyYy44Mi0uMDAyIDEuNTk2LS4zNTQgMi4xMDgtLjk4OC41MTItLjYzNi42NTYtMS40OTIuNjA2LTIuMzEyLS4xNS0uODItLjY1Mi0xLjU2NC0xLjM4OC0xLjk0NC0uMzY4LS4xOTQtLjc1Mi0uMjc2LTEuMTM2LS4yNTJ6bS0yLjg3NCA2LjQ0NEE0LjgxNiA0LjgxNiAwIDAgMCA1LjEgMTQuNGMwIDIuNjU2IDIuMTM4IDQuNzkgNC44IDQuNzkgMi42NjYgMCA0LjgtMi4xMzQgNC44LTQuNzkgMC0yLjY2Ni0yLjEzNC00LjgtNC44LTQuOC0yLjY2NiAwLTQuOCAyLjEzNC00LjggNC44em0xMC4wMjggMy44MzZjLS4zODQgMC0uNzY4LjE1LTEuMDU2LjQzOC0uNTc2LjU3Ni0uNTc2IDEuNTM2IDAgMi4xMTIuMjg4LjI4OC42NzIuNDM4IDEuMDU2LjQzOC4zODQgMCAuNzY4LS4xNSAxLjA1Ni0uNDM4LjU3Ni0uNTc2LjU3Ni0xLjUzNiAwLTIuMTEyLS4yODgtLjI4OC0uNjcyLS40MzgtMS4wNTYtLjQzNHoiLz48L3N2Zz4=" alt="Linux">
-                Linux
-            </a>
-        </section>
-
-        <section class="open-source">
-            Open Source Project: 
-            <a href="https://github.com/korrykatti/mirage" target="_blank">github.com/korrykatti/mirage</a>
-        </section>
-
-        <section class="feature-list">
-            <h2>Complete Feature List</h2>
-            <ul class="feature-detailed-list">
-                <li>
-                    <i>🔒</i>
-                    <div class="feature-content">
-                        <h3>End-to-End Encryption</h3>
-                        <p>Robust encryption to protect your conversations from unauthorized access. While we aim for the highest security standards, we don't claim military-grade encryption.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>👥</i>
-                    <div class="feature-content">
-                        <h3>Anonymous Accounts</h3>
-                        <p>Create accounts without revealing personal information. Minimal data collection ensures your privacy from the moment you join.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>📁</i>
-                    <div class="feature-content">
-                        <h3>Anonymous File Sharing</h3>
-                        <p>Upload and share files completely anonymously. Reasonable file upload limits ensure smooth sharing without compromising performance.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🌐</i>
-                    <div class="feature-content">
-                        <h3>No Metadata Tracking</h3>
-                        <p>We don't log who talks to whom, when, or for how long. Your communication patterns remain entirely private.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>💬</i>
-                    <div class="feature-content">
-                        <h3>Multi-Platform Support</h3>
-                        <p>Windows, Linux, and Web clients to keep you connected across all your devices. No installation needed - our application is completely portable.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🌈</i>
-                    <div class="feature-content">
-                        <h3>Open Source</h3>
-                        <p>Fully transparent codebase hosted on GitHub. Community-driven development ensures continuous improvement and trust.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🌐</i>
-                    <div class="feature-content">
-                        <h3>Personal Webpage</h3>
-                        <p>Every user gets a personal webpage to showcase their digital presence.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🎭</i>
-                    <div class="feature-content">
-                        <h3>Animated Avatars</h3>
-                        <p>Bring your digital persona to life with dynamic, expressive animated avatars that reflect your mood and style.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>📝</i>
-                    <div class="feature-content">
-                        <h3>Personal Blog</h3>
-                        <p>Each user receives a personal blog platform to share thoughts, stories, and experiences with the community.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🔐</i>
-                    <div class="feature-content">
-                        <h3>Private and Public Rooms</h3>
-                        <p>Flexible communication options: create private rooms for intimate conversations or join public rooms to connect with broader communities.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>💾</i>
-                    <div class="feature-content">
-                        <h3>Message Preservation</h3>
-                        <p>Want to keep your memories? We offer optional message saving, giving you control over your conversation history.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🤝</i>
-                    <div class="feature-content">
-                        <h3>Decentralized Identity</h3>
-                        <p>Your identity is yours. No central authority controls or monitors your digital presence.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🎨</i>
-                    <div class="feature-content">
-                        <h3>Rich Media Sharing</h3>
-                        <p>Share more than just text - send images, videos, audio, and documents with ease and privacy.</p>
-                    </div>
-                </li>
-                <li>
-                    <i>🌐</i>
-                    <div class="feature-content">
-                        <h3>Self-Hostable</h3>
-                        <p>Anyone can host their own Mirage server with zero Python knowledge. Simple, straightforward deployment for everyone.</p>
-                    </div>
-                </li>
-            </ul>
-        </section>
-    </div>
-
-    <script>
-        function createBubbles() {
-            const bgAnimation = document.querySelector('.bg-animation');
-            const bubbleCount = window.innerWidth < 768 ? 5 : 10;
-
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('bg-bubble');
-                
-                // Randomize bubble properties
-                bubble.style.width = `${Math.random() * 100 + 50}px`;
-                bubble.style.height = bubble.style.width;
-                bubble.style.left = `${Math.random() * 100}%`;
-                bubble.style.animationDuration = `${Math.random() * 30 + 20}s`;
-                bubble.style.animationDelay = `${Math.random() * 10}s`;
-
-                bgAnimation.appendChild(bubble);
-            }
-        }
-
-        // Create bubbles on load and resize
-        createBubbles();
-        window.addEventListener('resize', () => {
-            const bgAnimation = document.querySelector('.bg-animation');
-            bgAnimation.innerHTML = '';
-            createBubbles();
-        });
-    </script>
+  <footer>
+    <p>© 2025 mirage — fade clean, stay gone.</p>
+  </footer>
 </body>
 </html>
